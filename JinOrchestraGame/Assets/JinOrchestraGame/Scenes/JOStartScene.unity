@@ -216,13 +216,13 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 5
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 2423487757613623900, guid: 66879beb841df8044b6ae0c2f86d7296,
+  playerPrefab: {fileID: 2396697673222048598, guid: fc8a79e5367a2f44e88022926a8a292e,
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs: []
   showRoomGUI: 1
-  minPlayers: 1
+  minPlayers: 2
   roomPlayerPrefab: {fileID: 2117517409236959197, guid: 9f6968d7bfeeb334bb44ef915d69a994,
     type: 3}
   RoomScene: JORoomScene
