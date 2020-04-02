@@ -18,76 +18,12 @@ namespace JO
     /// It requires that the NetworkRoomPlayer component be on the room player objects.
     /// NetworkRoomManager is derived from NetworkManager, and so it implements many of the virtual functions provided by the NetworkManager class.
     /// </summary>
+    [AddComponentMenu("")]
     public class JONetworkRoomManager : NetworkRoomManager
     {
+        bool showStartButton;
+
         #region Server Callbacks
-
-        /// <summary>
-        /// This is called on the server when the server is started - including when a host is started.
-        /// </summary>
-        public override void OnRoomStartServer() { }
-
-        /// <summary>
-        /// This is called on the host when a host is started.
-        /// </summary>
-        public override void OnRoomStartHost() { }
-
-        /// <summary>
-        /// This is called on the host when the host is stopped.
-        /// </summary>
-        public override void OnRoomStopHost() { }
-
-        /// <summary>
-        /// This is called on the server when a new client connects to the server.
-        /// </summary>
-        /// <param name="conn">The new connection.</param>
-        public override void OnRoomServerConnect(NetworkConnection conn) { }
-
-        /// <summary>
-        /// This is called on the server when a client disconnects.
-        /// </summary>
-        /// <param name="conn">The connection that disconnected.</param>
-        public override void OnRoomServerDisconnect(NetworkConnection conn) { }
-
-        /// <summary>
-        /// This is called on the server when a networked scene finishes loading.
-        /// </summary>
-        /// <param name="sceneName">Name of the new scene.</param>
-        public override void OnRoomServerSceneChanged(string sceneName) { }
-
-        /// <summary>
-        /// This allows customization of the creation of the room-player object on the server.
-        /// <para>By default the roomPlayerPrefab is used to create the room-player, but this function allows that behaviour to be customized.</para>
-        /// </summary>
-        /// <param name="conn">The connection the player object is for.</param>
-        /// <returns>The new room-player object.</returns>
-        public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnection conn)
-        {
-            return base.OnRoomServerCreateRoomPlayer(conn);
-        }
-
-        /// <summary>
-        /// This allows customization of the creation of the GamePlayer object on the server.
-        /// <para>By default the gamePlayerPrefab is used to create the game-player, but this function allows that behaviour to be customized. The object returned from the function will be used to replace the room-player on the connection.</para>
-        /// </summary>
-        /// <param name="conn">The connection the player object is for.</param>
-        /// <param name="roomPlayer">The room player object for this connection.</param>
-        /// <returns>A new GamePlayer object.</returns>
-        public override GameObject OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer)
-        {
-            return base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
-        }
-
-        /// <summary>
-        /// This allows customization of the creation of the GamePlayer object on the server.
-        /// <para>This is only called for subsequent GamePlay scenes after the first one.</para>
-        /// <para>See OnRoomServerCreateGamePlayer to customize the player object for the initial GamePlay scene.</para>
-        /// </summary>
-        /// <param name="conn">The connection the player object is for.</param>
-        public override void OnRoomServerAddPlayer(NetworkConnection conn)
-        {
-            base.OnRoomServerAddPlayer(conn);
-        }
 
         /// <summary>
         /// This is called on the server when it is told that a client has finished switching from the room scene to a game player scene.
@@ -99,7 +35,10 @@ namespace JO
         /// <returns>False to not allow this player to replace the room player.</returns>
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
         {
-            return base.OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer);
+            PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
+            playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
+
+            return true;
         }
 
         /// <summary>
@@ -108,65 +47,32 @@ namespace JO
         /// </summary>
         public override void OnRoomServerPlayersReady()
         {
-            base.OnRoomServerPlayersReady();
+            Debug.Log("isHeadless:" + isHeadless);
+            if (isHeadless)
+            {
+                base.OnRoomServerPlayersReady();
+            }
+            else
+            {
+                showStartButton = true;
+            }
         }
 
         #endregion
 
-        #region Client Callbacks
-
-        /// <summary>
-        /// This is a hook to allow custom behaviour when the game client enters the room.
-        /// </summary>
-        public override void OnRoomClientEnter() { }
-
-        /// <summary>
-        /// This is a hook to allow custom behaviour when the game client exits the room.
-        /// </summary>
-        public override void OnRoomClientExit() { }
-
-        /// <summary>
-        /// This is called on the client when it connects to server.
-        /// </summary>
-        /// <param name="conn">The connection that connected.</param>
-        public override void OnRoomClientConnect(NetworkConnection conn) { }
-
-        /// <summary>
-        /// This is called on the client when disconnected from a server.
-        /// </summary>
-        /// <param name="conn">The connection that disconnected.</param>
-        public override void OnRoomClientDisconnect(NetworkConnection conn) { }
-
-        /// <summary>
-        /// This is called on the client when a client is started.
-        /// </summary>
-        /// <param name="roomClient">The connection for the room.</param>
-        public override void OnRoomStartClient() { }
-
-        /// <summary>
-        /// This is called on the client when the client stops.
-        /// </summary>
-        public override void OnRoomStopClient() { }
-
-        /// <summary>
-        /// This is called on the client when the client is finished loading a new networked scene.
-        /// </summary>
-        /// <param name="conn">The connection that finished loading a new networked scene.</param>
-        public override void OnRoomClientSceneChanged(NetworkConnection conn) { }
-
-        /// <summary>
-        /// Called on the client when adding a player to the room fails.
-        /// <para>This could be because the room is full, or the connection is not allowed to have more players.</para>
-        /// </summary>
-        public override void OnRoomClientAddPlayerFailed() { }
-
-        #endregion
 
         #region Optional UI
 
         public override void OnGUI()
         {
             base.OnGUI();
+
+            if (allPlayersReady && showStartButton && GUI.Button(new Rect(150, 300, 120, 20), "Start Game"))
+            {
+                showStartButton = false;
+
+                ServerChangeScene(GameplayScene);
+            }
         }
 
         #endregion
