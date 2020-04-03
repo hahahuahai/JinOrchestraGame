@@ -35,7 +35,7 @@ namespace JO
         /// <returns>False to not allow this player to replace the room player.</returns>
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
         {
-            PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
+            GamePlayer playerScore = gamePlayer.GetComponent<GamePlayer>();
             playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
 
             return true;

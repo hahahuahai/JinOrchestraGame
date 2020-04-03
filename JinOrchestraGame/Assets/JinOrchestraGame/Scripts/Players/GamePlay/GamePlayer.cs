@@ -5,12 +5,21 @@ using UnityEngine;
 
 namespace JO
 {
-    public class PlayerScore : NetworkBehaviour
+    public class GamePlayer : NetworkBehaviour
     {
         [SyncVar]
         public int index;
         [SyncVar]
         public uint score;
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            int x = index * 6;
+            int y = 0;
+            transform.localPosition = new Vector3(x, y, 0);
+        }
 
         private void OnGUI()
         {
