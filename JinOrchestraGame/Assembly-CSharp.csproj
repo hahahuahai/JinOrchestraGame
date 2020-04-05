@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\JinOrchestraGame\Scripts\Managers\JONetworkRoomManager.cs" />
+    <Compile Include="Assets\JinOrchestraGame\Scripts\Players\GamePlay\Directions.cs" />
     <Compile Include="Assets\JinOrchestraGame\Scripts\Players\GamePlay\GamePlayer.cs" />
     <Compile Include="Assets\JinOrchestraGame\Scripts\Players\JONetworkRoomPlayer.cs" />
     <None Include="Assets\ScriptTemplates\54-Mirror__Network Room Manager-NewNetworkRoomManager.cs.txt" />

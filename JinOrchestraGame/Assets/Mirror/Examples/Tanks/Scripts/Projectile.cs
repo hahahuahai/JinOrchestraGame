@@ -9,8 +9,9 @@ namespace Mirror.Examples.Tanks
         public float force = 1000;
 
         public override void OnStartServer()
-        {
+        {            
             Invoke(nameof(DestroySelf), destroyAfter);
+            Debug.Log("DestroySelf");
         }
 
         // set velocity for server and client. this way we don't have to sync the

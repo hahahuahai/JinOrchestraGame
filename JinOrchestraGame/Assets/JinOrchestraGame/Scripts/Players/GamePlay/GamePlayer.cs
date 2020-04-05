@@ -12,21 +12,30 @@ namespace JO
         public int index;
         [SyncVar]
         public uint score;
-        [SyncVar(hook = nameof(OnDirectionIndexChanged))]
+        [SyncVar]
         public int directionIndex;
-        
+
         public GameObject directionsPool;
         public GameObject spawningPlace;
         public GameObject bottomCenterPoint;
-
-        void OnDirectionIndexChanged(int oldDirectionIndex, int newDirectionIndex)
+        [Command]
+        void CmdGenerateDirections()
         {
-            GameObject go = Resources.Load<GameObject>("Prefabs/Directions/Directions_" + newDirectionIndex);
-            go = GameObject.Instantiate(go);
-            go.transform.parent = directionsPool.transform;
-            go.transform.localPosition = spawningPlace.transform.localPosition;
-            Debug.Log("距离底部还有多远：" + Vector3.Distance(go.transform.localPosition, bottomCenterPoint.transform.localPosition));
+            GameObject go = Resources.Load<GameObject>("Prefabs/Directions/Directions_" + directionIndex);
+            go = Instantiate(go, spawningPlace.transform.position, new Quaternion(0, 0, 0, 0));
+            NetworkServer.Spawn(go);
+            //go.transform.parent = spawningPlace.transform; 
         }
+
+        private void Start()
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            InvokeRepeating(nameof(CmdGenerateDirections), 1, 1);
+        }
+
 
         public override void OnStartClient()
         {
@@ -43,7 +52,7 @@ namespace JO
         public override void OnStartServer()
         {
             base.OnStartServer();
-            InvokeRepeating(nameof(GenerateDirectionIndex), 1, 1);//每隔一秒调用一次
+            InvokeRepeating(nameof(GenerateDirectionIndex), 0.1f, 1);//每隔一秒调用一次
         }
 
         [ServerCallback]
@@ -51,15 +60,15 @@ namespace JO
         {
             directionIndex = UnityEngine.Random.Range(0, 4);
         }
-        
-        void GenerateDirections()
-        {
-            GameObject go = Resources.Load<GameObject>("Prefabs/Directions/Directions_" + directionIndex);
-            go = GameObject.Instantiate(go);
-            go.transform.parent = directionsPool.transform;
-            go.transform.localPosition = spawningPlace.transform.localPosition;
-            Debug.Log("距离底部还有多远：" + Vector3.Distance(go.transform.localPosition, bottomCenterPoint.transform.localPosition));
-        }
+
+        //void GenerateDirections()
+        //{
+        //    GameObject go = Resources.Load<GameObject>("Prefabs/Directions/Directions_" + directionIndex);
+        //    NetworkServer.Spawn(go);
+        //    go.transform.parent = directionsPool.transform;
+        //    go.transform.localPosition = spawningPlace.transform.localPosition;
+        //    Debug.Log("距离底部还有多远：" + Vector3.Distance(go.transform.localPosition, bottomCenterPoint.transform.localPosition));
+        //}
 
         private void OnGUI()
         {
