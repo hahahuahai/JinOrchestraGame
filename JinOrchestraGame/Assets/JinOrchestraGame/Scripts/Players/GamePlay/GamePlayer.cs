@@ -26,6 +26,11 @@ namespace JO
             NetworkServer.Spawn(go);
             //go.transform.parent = spawningPlace.transform; 
         }
+        [Command]
+        void CmdJudgeDistance(int direction)//0上1左2下3右
+        {
+            //从底部发射一条射线向上，碰到的第一个，判断方向是否正确以及距离。
+        }
 
         private void Start()
         {
@@ -34,6 +39,21 @@ namespace JO
                 return;
             }
             InvokeRepeating(nameof(CmdGenerateDirections), 1, 1);
+        }
+
+        private void Update()
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+
+        
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))//左
+            {
+
+            }
         }
 
 

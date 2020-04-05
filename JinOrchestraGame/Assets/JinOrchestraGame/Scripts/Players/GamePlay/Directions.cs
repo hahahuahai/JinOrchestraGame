@@ -18,5 +18,12 @@ namespace JO
             Debug.Log("自动销毁");
             GameObject.Destroy(gameObject);
         }
+
+        [ServerCallback]
+        void OnTriggerEnter2D(Collider2D co)
+        {
+            Debug.Log("OnTriggerEnter");
+            NetworkServer.Destroy(gameObject);
+        }
     }
 }
